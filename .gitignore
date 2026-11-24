@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Jupyter / Colab
+.ipynb_checkpoints/
+
+# Logs (record important numbers, like KV cache capacity, in the README instead)
+*.log
+nohup.out
+
+# Model weights and Hugging Face cache (large, downloaded again on demand)
+.cache/
+hf_cache/
+*.safetensors
+*.bin
+
+# Secrets
+.env
+
+# OS / editor
+.DS_Store
+.vscode/
+
+# Note: results/ and plots/ are committed on purpose: they are small and are the evidence for the findings.
