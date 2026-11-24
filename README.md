@@ -29,15 +29,22 @@ This project serves a small model with [vLLM](https://docs.vllm.ai/), sends it m
 
 | Item | Value |
 |---|---|
-| GPU | TBD |
-| vLLM version | TBD |
-| Model | TBD |
-| Server flags | TBD |
-| KV cache capacity (tokens) | TBD |
+| GPU | Tesla T4 on Google Colab (14.56 GiB usable) |
+| vLLM version | 0.34.0 (Colab Python 3.13) |
+| Model | Qwen/Qwen2.5-1.5B-Instruct (float16) |
+| Server flags | `--dtype half --max-model-len 4096 --gpu-memory-utilization 0.90` |
+| KV cache capacity (tokens) | 335,872 (5,248 blocks × 64 tokens, 8.97 GiB) |
+| Attention | FlashAttention 2 unavailable on T4 (compute capability 7.5); vLLM falls back to another backend |
 
 ## How to run
 
-TBD
+| Notebook | What it runs |
+|---|---|
+| [`colab_vllm_t4gpu.ipynb`](colab_vllm_t4gpu.ipynb) | vLLM: server setup, the sweep (`sweep.sh`), prefix caching ON/OFF |
+| [`colab_sglang.ipynb`](colab_sglang.ipynb) | SGLang: the same experiments, measured with the same vLLM benchmark client |
+
+Open a notebook in Colab (**File → Open notebook → GitHub**), pick a T4 runtime, and run the cells top to bottom.
+`sweep.sh` can also be run on any machine with a server already running; see the comments at the top of the script.
 
 ## Results
 

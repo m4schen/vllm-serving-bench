@@ -5,6 +5,10 @@
 #   bash sweep.sh
 #   TAG=t4_kv1g CONCURRENCIES="16 32 64" bash sweep.sh    # override any setting
 #
+# Another server (e.g. SGLang), measured with the same vLLM client:
+#   BACKEND=openai BASE_URL=http://localhost:30000 TAG=t4_sglang \
+#   BENCH_CMD="/content/benchenv/bin/vllm bench serve" bash sweep.sh
+#
 # Each run is saved as results/<TAG>/c<concurrency>_in<input_len>.json.
 # Runs whose result file already exists are skipped, so the sweep can be
 # resumed after a Colab disconnect.
@@ -20,6 +24,8 @@ OUTPUT_LEN="${OUTPUT_LEN:-128}"
 MIN_PROMPTS="${MIN_PROMPTS:-32}"               # at least this many requests per run
 PROMPTS_PER_SLOT="${PROMPTS_PER_SLOT:-5}"      # requests per concurrency slot
 BASE_URL="${BASE_URL:-http://localhost:8000}"
+BACKEND="${BACKEND:-vllm}"                     # request format; "openai" works for any OpenAI-compatible server
+BENCH_CMD="${BENCH_CMD:-vllm bench serve}"     # benchmark client (can live in a separate venv)
 
 RESULT_DIR="results/${TAG}"
 LOG_DIR="${RESULT_DIR}/logs"
@@ -52,8 +58,8 @@ for in_len in ${INPUT_LENS}; do
 
         echo "[${run}/${total}] ${name}: ${num_prompts} prompts, seed ${seed}"
 
-        if vllm bench serve \
-            --backend vllm \
+        if ${BENCH_CMD} \
+            --backend "${BACKEND}" \
             --base-url "${BASE_URL}" \
             --model "${MODEL}" \
             --dataset-name random \
@@ -65,7 +71,7 @@ for in_len in ${INPUT_LENS}; do
             --percentile-metrics ttft,tpot,itl,e2el \
             --metric-percentiles 50,99 \
             --seed "${seed}" \
-            --metadata "tag=${TAG}" "input_len=${in_len}" "output_len=${OUTPUT_LEN}" \
+            --metadata "tag=${TAG}" "server_backend=${BACKEND}" "input_len=${in_len}" "output_len=${OUTPUT_LEN}" \
             --save-result --result-dir "${RESULT_DIR}" --result-filename "${name}.json" \
             > "${LOG_DIR}/${name}.log" 2>&1
         then
