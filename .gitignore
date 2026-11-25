@@ -7,6 +7,9 @@ __pycache__/
 # Jupyter / Colab
 .ipynb_checkpoints/
 
+# Downloads from Colab (unzip into results/ instead)
+*.zip
+
 # Logs (record important numbers, like KV cache capacity, in the README instead)
 *.log
 nohup.out
